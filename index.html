@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>swapStream - Any-to-Any Crypto Swap</title>
+  <meta name="description" content="swapStream: Instant, private, no-KYC crypto swaps. Any coin to any coin." />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: { primary: '#6366f1', 'primary-dark': '#4f46e5', monera: '#f97316' },
+          animation: { 'fade-in': 'fadeIn 0.5s ease-in-out' },
+          keyframes: { fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } } }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/luxon"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
+
+  <style>
+    .coin-icon { width: 36px; height: 36px; object-fit: contain; }
+    .review-star { color: #fbbf24; }
+    .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+    .dark .glass { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 glass border-b border-gray-200 dark:border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <a href="#home" class="text-2xl font-bold text-primary flex items-center gap-2">
+          <i class="fas fa-exchange-alt text-monera"></i> swapStream
+        </a>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#home" class="hover:text-primary transition font-medium">Home</a>
+          <a href="#swap" class="hover:text-primary transition font-medium">Swap</a>
+          <a href="#pairs" class="hover:text-primary transition font-medium">Pairs</a>
+          <a href="#prices" class="hover:text-primary transition font-medium">Prices</a>
+          <a href="#reviews" class="hover:text-primary transition font-medium">Reviews</a>
+          <a href="#contact" class="hover:text-primary transition font-medium">Contact</a>
+          <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+            <i class="fas fa-moon dark:hidden"></i>
+            <i class="fas fa-sun hidden dark:block"></i>
+          </button>
+        </div>
+        <button class="md:hidden" id="mobile-menu-btn"><i class="fas fa-bars text-xl"></i></button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+      <div class="px-4 py-3 space-y-2">
+        <a href="#home" class="block py-2 hover:text-primary">Home</a>
+        <a href="#swap" class="block py-2 hover:text-primary">Swap</a>
+        <a href="#pairs" class="block py-2 hover:text-primary">Pairs</a>
+        <a href="#prices" class="block py-2 hover:text-primary">Prices</a>
+        <a href="#reviews" class="block py-2 hover:text-primary">Reviews</a>
+        <a href="#contact" class="block py-2 hover:text-primary">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Home -->
+  <section id="home" class="pt-24 pb-16 px-4 text-center">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
+        Any-to-Any Crypto Swap
+        <span class="block text-monera">BTC • ETH • SOL • USDT • Monera</span>
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto">
+        Swap any coin to any coin. No KYC. Private. Fast.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:scale-105 transition">
+          <div class="text-4xl font-bold text-primary">1,040+</div>
+          <div class="text-gray-600 dark:text-gray-400">Swaps Completed</div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:scale-105 transition">
+          <div class="text-4xl font-bold text-primary">$280K+</div>
+          <div class="text-gray-600 dark:text-gray-400">Total Volume</div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:scale-105 transition">
+          <div class="text-4xl font-bold text-primary">4.3/5</div>
+          <div class="text-gray-600 dark:text-gray-400">Average Rating</div>
+        </div>
+      </div>
+      <a href="#swap" class="inline-flex items-center gap-3 bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-8 rounded-full text-lg transition-all hover:scale-105 shadow-xl">
+        Start Swapping <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- Swap Page -->
+  <section id="swap" class="py-16 px-4 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-12">Swap Any Coin</h2>
+      
+      <div id="swap-form-container">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl">
+          <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <div>
+              <label class="block text-sm font-medium mb-2">You Send</label>
+              <div class="flex gap-3">
+                <select id="from-coin" class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary">
+                  <option value="BTC">Bitcoin (BTC)</option>
+                  <option value="ETH">Ethereum (ETH ERC-20)</option>
+                  <option value="SOL">Solana (SOL)</option>
+                  <option value="USDT">Tether (USDT BSC BEP-20)</option>
+                  <option value="XMR">Monera (XMR)</option>
+                </select>
+                <input type="number" id="from-amount" placeholder="0.00" class="w-32 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary">
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">You Receive</label>
+              <div class="flex gap-3">
+                <select id="to-coin" class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary">
+                  <option value="XMR">Monera (XMR)</option>
+                  <option value="BTC">Bitcoin (BTC)</option>
+                  <option value="ETH">Ethereum (ETH)</option>
+                  <option value="SOL">Solana (SOL)</option>
+                  <option value="USDT">Tether (USDT)</option>
+                </select>
+                <input type="text" id="to-amount" placeholder="0.00" readonly class="w-32 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700">
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2">Your Receive Wallet Address</label>
+            <input type="text" id="wallet-address" placeholder="Enter wallet address" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary">
+          </div>
+          
+          <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg mb-6 text-sm">
+            <p>Estimated: <span id="rate-display">1 BTC ≈ 420 XMR</span> | You get: <span id="estimated">0 XMR</span></p>
+          </div>
+          
+          <button id="proceed-swap" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-lg transition hover:scale-105 flex items-center justify-center gap-2">
+            Proceed to Deposit <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Deposit Step (NO QR CODE) -->
+      <div id="deposit-step" class="hidden">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl text-center">
+          <i class="fas fa-paper-plane text-6xl text-primary mb-6"></i>
+          <h3 class="text-2xl font-bold mb-4">Send <span id="deposit-coin">BTC</span></h3>
+          <p class="mb-6">Send exactly <strong id="deposit-amount">0.00</strong> <span id="deposit-coin2">BTC</span> to:</p>
+          <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg font-mono text-sm break-all mb-6">
+            <span id="deposit-address">bc1qexampleaddress1234567890</span>
+            <button onclick="copyAddress()" class="ml-2 text-primary"><i class="fas fa-copy"></i></button>
+          </div>
+          <p class="text-sm text-gray-500 mb-4"><i class="fas fa-clock"></i> Expires in <strong>30 minutes</strong></p>
+          <button onclick="location.reload()" class="bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-lg">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pairs -->
+  <section id="pairs" class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-12">All Swap Pairs</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <!-- BTC to XMR -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+          <div class="flex justify-center items-center gap-4 mb-4">
+            <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" alt="BTC" class="w-12 h-12 coin-icon">
+            <i class="fas fa-exchange-alt text-2xl text-primary"></i>
+            <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="w-12 h-12 coin-icon">
+          </div>
+          <p class="font-semibold">BTC to Monera</p>
+        </div>
+        <!-- XMR to BTC -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+          <div class="flex justify-center items-center gap-4 mb-4">
+            <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="w-12 h-12 coin-icon">
+            <i class="fas fa-exchange-alt text-2xl text-primary"></i>
+            <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" alt="BTC" class="w-12 h-12 coin-icon">
+          </div>
+          <p class="font-semibold">Monera to BTC</p>
+        </div>
+        <!-- ETH to XMR -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+          <div class="flex justify-center items-center gap-4 mb-4">
+            <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH" class="w-12 h-12 coin-icon">
+            <i class="fas fa-exchange-alt text-2xl text-primary"></i>
+            <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="w-12 h-12 coin-icon">
+          </div>
+          <p class="font-semibold">ETH to Monera</p>
+        </div>
+        <!-- XMR to ETH -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+          <div class="flex justify-center items-center gap-4 mb-4">
+            <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="w-12 h-12 coin-icon">
+            <i class="fas fa-exchange-alt text-2xl text-primary"></i>
+            <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH" class="w-12 h-12 coin-icon">
+          </div>
+          <p class="font-semibold">Monera to ETH</p>
+        </div>
+        <!-- SOL to XMR -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+          <div class="flex justify-center items-center gap-4 mb-4">
+            <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL" class="w-12 h-12 coin-icon">
+            <i class="fas fa-exchange-alt text-2xl text-primary"></i>
+            <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="w-12 h-12 coin-icon">
+          </div>
+          <p class="font-semibold">SOL to Monera</p>
+        </div>
+        <!-- XMR to SOL -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+          <div class="flex justify-center items-center gap-4 mb-4">
+            <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="w-12 h-12 coin-icon">
+            <i class="fas fa-exchange-alt text-2xl text-primary"></i>
+            <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL" class="w-12 h-12 coin-icon">
+          </div>
+          <p class="font-semibold">Monera to SOL</p>
+        </div>
+        <!-- USDT to XMR -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+          <div class="flex justify-center items-center gap-4 mb-4">
+            <img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT" class="w-12 h-12 coin-icon">
+            <i class="fas fa-exchange-alt text-2xl text-primary"></i>
+            <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="w-12 h-12 coin-icon">
+          </div>
+          <p class="font-semibold">USDT to Monera</p>
+        </div>
+        <!-- XMR to USDT -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+          <div class="flex justify-center items-center gap-4 mb-4">
+            <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="w-12 h-12 coin-icon">
+            <i class="fas fa-exchange-alt text-2xl text-primary"></i>
+            <img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT" class="w-12 h-12 coin-icon">
+          </div>
+          <p class="font-semibold">Monera to USDT</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prices -->
+  <section id="prices" class="py-16 px-4 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-12">Live Prices</h2>
+      <div id="price-cards" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12"></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- BTC 7-Day Chart -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
+          <h3 class="text-center font-semibold mb-4">BTC/USD - 7 Days</h3>
+          <canvas id="chart-7d"></canvas>
+        </div>
+        <!-- ETH 7-Day Chart -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
+          <h3 class="text-center font-semibold mb-4">ETH/USD - 7 Days</h3>
+          <canvas id="chart-eth"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section id="reviews" class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-12">User Reviews</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="review-container"></div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-16 px-4 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-4xl font-bold mb-8">Contact Us</h2>
+      <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl">
+        <p class="text-lg mb-4">
+          <i class="fas fa-envelope text-primary"></i>
+          <a href="mailto:swapstream@tuta.io" class="font-semibold hover:text-primary">swapstream@tuta.io</a>
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          <i class="fas fa-clock"></i> We respond within <strong>2 hours</strong> (24/7)
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300 py-12 px-4">
+    <div class="max-w-7xl mx-auto text-center">
+      <div class="flex justify-center items-center gap-2 mb-6">
+        <i class="fas fa-exchange-alt text-monera text-2xl"></i>
+        <span class="text-2xl font-bold text-white">swapStream</span>
+      </div>
+      <p class="text-sm">© 2025 swapStream. Privacy-first exchange.</p>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script>
+    // Theme
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+
+    // Mobile menu
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+
+    // Swap Logic
+    const rates = {
+      BTC: { XMR: 420, ETH: 15, SOL: 300, USDT: 68000 },
+      ETH: { XMR: 28, BTC: 0.067, SOL: 20, USDT: 4500 },
+      SOL: { XMR: 1.4, BTC: 0.0033, ETH: 0.05, USDT: 225 },
+      USDT: { XMR: 0.009, BTC: 0.0000147, ETH: 0.00022, SOL: 0.0044 },
+      XMR: { BTC: 0.00238, ETH: 0.0357, SOL: 0.714, USDT: 111 }
+    };
+
+    const fromCoin = document.getElementById('from-coin');
+    const toCoin = document.getElementById('to-coin');
+    const fromAmount = document.getElementById('from-amount');
+    const toAmount = document.getElementById('to-amount');
+    const estimated = document.getElementById('estimated');
+    const rateDisplay = document.getElementById('rate-display');
+
+    function updateEstimate() {
+      const from = fromCoin.value;
+      const to = toCoin.value;
+      const amount = parseFloat(fromAmount.value) || 0;
+      const rate = rates[from]?.[to] || 0;
+      const received = amount * rate;
+      toAmount.value = received.toFixed(6);
+      estimated.textContent = received.toFixed(6) + ' ' + to;
+      rateDisplay.textContent = `1 ${from} ≈ ${rate.toFixed(6)} ${to}`;
+    }
+
+    fromCoin.addEventListener('change', updateEstimate);
+    toCoin.addEventListener('change', updateEstimate);
+    fromAmount.addEventListener('input', updateEstimate);
+
+    document.getElementById('proceed-swap').addEventListener('click', () => {
+      const amount = parseFloat(fromAmount.value);
+      const wallet = document.getElementById('wallet-address').value.trim();
+      if (!amount || !wallet) return alert('Fill all fields.');
+
+      document.getElementById('deposit-coin').textContent = fromCoin.value;
+      document.getElementById('deposit-coin2').textContent = fromCoin.value;
+      document.getElementById('deposit-amount').textContent = amount.toFixed(8);
+
+      const sampleAddr = {
+        BTC: 'bc1qvxzvx0hdcahwys5v4yuqh5er9myuy4hcj3yudl',
+        ETH: '0xD283a690F43243A42Af8BD3bE3652EFc7494B71C',
+        SOL: '3FKvzXKdwPpFxqD5K8xBerje4KwdrTrVfBZniWi35mws',
+        USDT: '0xD283a690F43243A42Af8BD3bE3652EFc7494B71C',
+        XMR: '87oQweF8uXjYA9wRch4dXaAfSAuT8unB9FBuBFH9BTktDTB8gN17B2Zb5N35x1Fad12TRnq7yJjuJBtQVPWuagXyGTjCBBb'
+      };
+      const addr = sampleAddr[fromCoin.value];
+      document.getElementById('deposit-address').textContent = addr;
+
+      document.getElementById('swap-form-container').classList.add('hidden');
+      document.getElementById('deposit-step').classList.remove('hidden');
+    });
+
+    function copyAddress() {
+      navigator.clipboard.writeText(document.getElementById('deposit-address').textContent);
+      alert('Address copied!');
+    }
+
+    // Reviews (30, 3.8–4.6)
+    const reviews = [
+      { name: "Marcus Lee", rating: 4.3, text: "Swapped 0.05 BTC to Monera. Took 18 minutes total. No issues, clean interface." },
+      { name: "Elena Petrova", rating: 4.1, text: "Used ETH to XMR. Rate was fair. Deposit address appeared instantly." },
+      { name: "Jamal Carter", rating: 4.5, text: "Best no-KYC swap I’ve used. Support replied in 40 minutes via email." },
+      { name: "Sofia Mendes", rating: 3.9, text: "Swapped SOL to USDT. Slight delay (25 mins) but got full amount." },
+      { name: "Raj Patel", rating: 4.4, text: "Dark mode works great. Mobile site is smooth." },
+      { name: "Anna Schmidt", rating: 4.0, text: "First time using. Instructions were clear. Will use again." },
+      { name: "David Kim", rating: 4.6, text: "Swapped $500 USDT to Monera. Fast and private." },
+      { name: "Lina Chen", rating: 4.2, text: "Live prices help decide when to swap. Good feature." },
+      { name: "Omar Farooq", rating: 3.8, text: "Took 32 minutes for ETH swap. Expected faster." },
+      { name: "Freya Olsen", rating: 4.3, text: "No registration needed. Just swap and go." },
+      { name: "Carlos Rivera", rating: 4.1, text: "Swapped small amount of SOL. Worked fine." },
+      { name: "Yuki Tanaka", rating: 4.5, text: "Privacy-focused. Exactly what I wanted." },
+      { name: "Noah Williams", rating: 4.0, text: "Rate slightly below market but acceptable for privacy." },
+      { name: "Aisha Khan", rating: 4.4, text: "Support helped with wrong network issue. Resolved in 1 hour." },
+      { name: "Lars Nielsen", rating: 4.2, text: "Clean design. Easy to use." },
+      { name: "Mateo Gomez", rating: 3.9, text: "Deposit timer is helpful. Wish it was 45 mins." },
+      { name: "Zoe Taylor", rating: 4.6, text: "Best for Monera. Will keep using." },
+      { name: "Arjun Singh", rating: 4.1, text: "Swapped during high gas. Still completed." },
+      { name: "Clara Müller", rating: 4.3, text: "No hidden fees. Everything upfront." },
+      { name: "Nina Andersson", rating: 4.0, text: "Works on phone. No app needed." },
+      { name: "Gabriel Costa", rating: 4.5, text: "Fast swap from USDT to XMR." },
+      { name: "Leila Hosseini", rating: 4.2, text: "Good for beginners." },
+      { name: "Thomas Weber", rating: 3.8, text: "Slight UI lag on old Android." },
+      { name: "Hana Suzuki", rating: 4.4, text: "Love the any-to-any feature." },
+      { name: "Ryan Thompson", rating: 4.1, text: "Reliable so far." },
+      { name: "Valeria Rossi", rating: 4.3, text: "Swapped XMR to BTC. Smooth." },
+      { name: "Fatima Al-Sayed", rating: 4.0, text: "Fair rates. No complaints." },
+      { name: "Oliver Schmidt", rating: 4.5, text: "Best privacy swap site." },
+      { name: "Emma Johnson", rating: 4.2, text: "Used twice. Both times good." },
+      { name: "Rahul Patel", rating: 3.9, text: "Could be faster but works." }
+    ];
+
+    function renderStars(rating) {
+      let stars = '';
+      for (let i = 1; i <= 5; i++) {
+        if (i <= Math.floor(rating)) stars += '<i class="fas fa-star review-star"></i>';
+        else if (i === Math.ceil(rating) && rating % 1 >= 0.5) stars += '<i class="fas fa-star-half-alt review-star"></i>';
+        else stars += '<i class="far fa-star review-star"></i>';
+      }
+      return stars + ` <span class="text-sm text-gray-500 ml-1">${rating}/5</span>`;
+    }
+
+    const reviewContainer = document.getElementById('review-container');
+    reviews.forEach(r => {
+      const div = document.createElement('div');
+      div.className = 'bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md';
+      div.innerHTML = `
+        <div class="flex items-center mb-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full"></div>
+          <div class="ml-3">
+            <p class="font-semibold">${r.name}</p>
+            <p class="text-sm text-gray-500">Verified User</p>
+          </div>
+        </div>
+        <div class="flex mb-2">${renderStars(r.rating)}</div>
+        <p class="text-gray-600 dark:text-gray-300">"${r.text}"</p>
+      `;
+      reviewContainer.appendChild(div);
+    });
+
+    // Prices
+    const coinIds = { BTC: 'bitcoin', ETH: 'ethereum', SOL: 'solana', USDT: 'tether', XMR: 'monero' };
+    async function loadPrices() {
+      const ids = Object.values(coinIds).join(',');
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
+      const data = await res.json();
+      const container = document.getElementById('price-cards');
+      container.innerHTML = '';
+      const symbols = Object.keys(coinIds);
+      symbols.forEach(symbol => {
+        const id = coinIds[symbol];
+        const price = data[id].usd;
+        const change = data[id].usd_24h_change;
+        const iconMap = {
+          BTC: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png',
+          ETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
+          SOL: 'https://assets.coingecko.com/coins/images/4128/small/solana.png',
+          USDT: 'https://assets.coingecko.com/coins/images/325/small/Tether.png',
+          XMR: 'https://assets.coingecko.com/coins/images/69/small/monero_logo.png'
+        };
+        container.innerHTML += `
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg text-center">
+            <img src="${iconMap[symbol]}" alt="${symbol}" class="w-10 h-10 mx-auto mb-3 coin-icon">
+            <h3 class="font-bold text-lg">${symbol}</h3>
+            <p class="text-2xl font-bold">$${price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+            <p class="${change >= 0 ? 'text-green-500' : 'text-red-500'} text-sm">${change >= 0 ? 'Up' : 'Down'} ${Math.abs(change).toFixed(2)}%</p>
+          </div>
+        `;
+      });
+    }
+
+    // Charts
+    async function loadCharts() {
+      // BTC 7-Day
+      const res7 = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7');
+      const data7 = await res7.json();
+      new Chart(document.getElementById('chart-7d'), {
+        type: 'line',
+        data: { datasets: [{ label: 'BTC/USD', data: data7.prices.map(p => ({x: p[0], y: p[1]})), borderColor: '#f97316', tension: 0.3, fill: false }] },
+        options: { responsive: true, plugins: { legend: { display: true } }, scales: { x: { type: 'time', time: { unit: 'day' } } } }
+      });
+
+      // ETH 7-Day
+      const resEth = await fetch('https://api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=usd&days=7');
+      const dataEth = await resEth.json();
+      new Chart(document.getElementById('chart-eth'), {
+        type: 'line',
+        data: { datasets: [{ label: 'ETH/USD', data: dataEth.prices.map(p => ({x: p[0], y: p[1]})), borderColor: '#6366f1', tension: 0.3, fill: false }] },
+        options: { responsive: true, plugins: { legend: { display: true } }, scales: { x: { type: 'time', time: { unit: 'day' } } } }
+      });
+    }
+
+    loadPrices();
+    loadCharts();
+    setInterval(loadPrices, 60000);
+  </script>
+</body>
+</html>
