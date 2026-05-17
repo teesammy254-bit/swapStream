@@ -19,8 +19,10 @@
             mono: ['IBM Plex Mono', 'monospace']
           },
           colors: { 
-            primary: '#00d9ff',
-            'primary-dark': '#00b8d4',
+            primary: '#ff6b35',
+            'primary-dark': '#ff8c42',
+            accent: '#8b5cf6',
+            crypto: '#3b82f6',
             monera: '#ff6b35'
           }
         }
@@ -36,17 +38,21 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
 
   <style>
-    /* Retro Crypto Background */
+    /* Heavy Dark Crypto UI */
     body {
-      background: #0a0e27;
+      background: #000000;
       position: relative;
       overflow-x: hidden;
+      min-height: 100vh;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: #e5e7eb;
     }
 
     body.light {
-      background: #f0f4f8;
+      background: #f8fafc;
     }
 
+    /* Subtle crypto ambient */
     body::before {
       content: '';
       position: fixed;
@@ -54,140 +60,291 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: 
-        linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(0deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px);
-      background-size: 50px 50px;
+      background: radial-gradient(circle at 15% 20%, rgba(255, 147, 44, 0.04), transparent 18%),
+                  radial-gradient(circle at 80% 18%, rgba(98, 126, 234, 0.04), transparent 20%),
+                  radial-gradient(circle at 68% 75%, rgba(38, 161, 122, 0.03), transparent 18%);
       pointer-events: none;
       z-index: 0;
+      animation: none;
     }
-
-    body.light::before {
-      background: 
-        linear-gradient(90deg, rgba(0, 100, 200, 0.05) 1px, transparent 1px),
-        linear-gradient(0deg, rgba(0, 100, 200, 0.05) 1px, transparent 1px);
-      background-size: 50px 50px;
-    }
-
-    /* Retro scanlines */
-    body::after {
       content: '';
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.05),
-        rgba(0, 0, 0, 0.05) 1px,
-        transparent 1px,
-        transparent 2px
-      );
+      background: radial-gradient(circle at 15% 20%, rgba(255, 147, 44, 0.08), transparent 18%),
+                  radial-gradient(circle at 80% 18%, rgba(98, 126, 234, 0.08), transparent 20%),
+                  radial-gradient(circle at 68% 75%, rgba(38, 161, 122, 0.06), transparent 18%);
       pointer-events: none;
-      z-index: 1;
-      opacity: 0.3;
+      z-index: 0;
+      animation: none;
     }
 
-    /* Floating crypto symbols */
+    @keyframes cryptoGradient {
+      0%, 100% { 
+        background: radial-gradient(ellipse 100% 100% at 50% 0%, rgba(255, 107, 53, 0.08) 0%, transparent 40%),
+                    radial-gradient(ellipse 80% 80% at 100% 100%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+      }
+      50% {
+        background: radial-gradient(ellipse 100% 100% at 30% 20%, rgba(255, 107, 53, 0.1) 0%, transparent 40%),
+                    radial-gradient(ellipse 80% 80% at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+      }
+    }
+
+    body.light::before {
+      animation: none;
+      background: radial-gradient(ellipse 80% 80% at 50% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+    }
+
+    /* Heavy Crypto Blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: -1;
+      mix-blend-mode: screen;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: rgba(255, 107, 53, 0.25);
+      top: -150px;
+      left: -100px;
+      animation: blob-float 25s infinite ease-in-out;
+    }
+
+    .blob-2 {
+      width: 400px;
+      height: 400px;
+      background: rgba(139, 92, 246, 0.2);
+      bottom: -100px;
+      right: -50px;
+      animation: blob-float 30s infinite ease-in-out reverse;
+    }
+
+    .blob-3 {
+      width: 350px;
+      height: 350px;
+      background: rgba(59, 130, 246, 0.15);
+      top: 50%;
+      right: -75px;
+      animation: blob-float 35s infinite ease-in-out;
+    }
+
+    @keyframes blob-float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(150px, -100px) scale(1.1); }
+      66% { transform: translate(-100px, 150px) scale(0.9); }
+    }
+
+    /* Crypto Symbols - Heavy Floating */
     .crypto-symbol {
       position: fixed;
-      font-size: 100px;
-      opacity: 0.02;
+      font-size: 180px;
+      opacity: 0.04;
       pointer-events: none;
       z-index: 0;
       font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      color: #00d9ff;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ff6b35, #8b5cf6, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: cryptoDrift 40s ease-in-out infinite;
+      filter: drop-shadow(0 0 30px rgba(255, 107, 53, 0.3));
+    }
+
+    @keyframes cryptoDrift {
+      0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+      50% { transform: translateY(40px) rotate(10deg) scale(1.05); }
     }
 
     body.light .crypto-symbol {
-      opacity: 0.04;
-      color: #0066cc;
+      opacity: 0.06;
     }
 
-    .symbol-1 { top: 10%; left: 5%; transform: rotate(-15deg); }
-    .symbol-2 { top: 20%; right: 10%; transform: rotate(25deg); }
-    .symbol-3 { bottom: 15%; left: 15%; transform: rotate(10deg); }
-    .symbol-4 { top: 50%; right: 5%; transform: rotate(-20deg); }
-    .symbol-5 { bottom: 25%; right: 20%; transform: rotate(35deg); }
+    .symbol-1 { top: 5%; left: 2%; animation-delay: 0s; }
+    .symbol-2 { top: 25%; right: 5%; animation-delay: 8s; }
+    .symbol-3 { bottom: 10%; left: 10%; animation-delay: 16s; }
+    .symbol-4 { top: 55%; right: 3%; animation-delay: 24s; }
+    .symbol-5 { bottom: 30%; right: 8%; animation-delay: 32s; font-size: 150px; }
 
-    /* Card Styles */
+    /* Heavy Card Styles */
     .card {
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 217, 255, 0.2);
-      transition: all 0.3s ease;
+      background: rgba(3, 5, 10, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 107, 53, 0.12);
+      transition: all 0.35s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+      transition: left 0.6s;
+    }
+
+    .card:hover::before {
+      left: 100%;
     }
 
     body.light .card {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(0, 100, 200, 0.2);
+      background: linear-gradient(135deg, rgba(248, 250, 252, 0.8), rgba(240, 245, 250, 0.6));
+      border: 1.5px solid rgba(139, 92, 246, 0.25);
+      box-shadow: 0 8px 32px rgba(139, 92, 246, 0.1);
     }
 
     .card:hover {
-      border-color: rgba(0, 217, 255, 0.4);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0, 217, 255, 0.15);
+      border-color: rgba(255, 107, 53, 0.35);
+      box-shadow: 0 20px 45px rgba(255, 107, 53, 0.18), 0 0 50px rgba(139, 92, 246, 0.1);
     }
 
     /* Navigation */
     nav {
-      background: rgba(10, 14, 39, 0.9);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(30px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 12px 45px rgba(0, 0, 0, 0.65);
     }
 
     body.light nav {
-      background: rgba(255, 255, 255, 0.95);
-      border-bottom: 1px solid rgba(0, 100, 200, 0.2);
+      background: rgba(255, 255, 255, 0.85);
+      border-bottom: 1.5px solid rgba(139, 92, 246, 0.2);
     }
 
     /* Text colors */
-    body.light .text-light { color: #1a202c !important; }
-    body.light .text-muted { color: #4a5568 !important; }
+    body.light .text-light { color: #0f172a !important; }
+    body.light .text-muted { color: #475569 !important; }
 
     /* Inputs */
     .input-field {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(0, 217, 255, 0.3);
-      color: #fff;
-      transition: all 0.3s;
+      background: rgba(8, 10, 18, 0.95);
+      border: 1px solid rgba(255, 107, 53, 0.16);
+      color: #f8fafc;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      font-weight: 500;
+      -webkit-appearance: none;
+         -moz-appearance: none;
+              appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='rgba(255,255,255,0.7)' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1rem;
+      padding-right: 3rem;
     }
 
     body.light .input-field {
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(0, 100, 200, 0.3);
-      color: #1a202c;
+      background: rgba(248, 250, 252, 0.7);
+      border: 2px solid rgba(139, 92, 246, 0.25);
+      color: #0f172a;
     }
 
     .input-field:focus {
       outline: none;
-      border-color: #00d9ff;
-      box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+      border-color: rgba(255, 107, 53, 0.45);
+      box-shadow: 0 0 24px rgba(255, 107, 53, 0.25), inset 0 0 12px rgba(255, 107, 53, 0.08);
+    }
+
+    .input-field::placeholder {
+      color: rgba(255, 255, 255, 0.28);
+    }
+
+    .input-field option {
+      background: #020205;
+      color: #f8fafc;
+    }
+
+    .input-field::-ms-expand {
+      display: none;
+    }
+
+    body.light .input-field::placeholder {
+      color: rgba(15, 23, 42, 0.3);
     }
 
     /* Button */
     .btn-primary {
-      background: linear-gradient(135deg, #00d9ff, #00b8d4);
-      box-shadow: 0 4px 15px rgba(0, 217, 255, 0.3);
+      background: linear-gradient(135deg, #ff6b35, #ff8c42);
+      box-shadow: 0 10px 35px rgba(255, 107, 53, 0.5);
+      border: none;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.7s;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
     }
 
     .btn-primary:hover {
-      box-shadow: 0 6px 20px rgba(0, 217, 255, 0.4);
-      transform: translateY(-2px);
+      box-shadow: 0 14px 44px rgba(255, 107, 53, 0.65), 0 0 40px rgba(139, 92, 246, 0.25);
+    }
+
+    .btn-primary:active {
+      transform: none;
     }
 
     /* Icons */
     .coin-icon {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       object-fit: contain;
+      filter: drop-shadow(0 0 12px rgba(255, 107, 53, 0.4));
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+
+    .card:hover .coin-icon {
+      filter: drop-shadow(0 0 25px rgba(255, 107, 53, 0.8));
+      transform: scale(1.15) rotate(10deg);
+    }
+
+    /* Crypto Badge */
+    .crypto-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(139, 92, 246, 0.2));
+      border: 1px solid rgba(255, 107, 53, 0.4);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      letter-spacing: 1px;
     }
 
     /* Review Stars */
     .review-star {
       color: #fbbf24;
+      animation: starTwinkle 3s ease-in-out infinite;
+    }
+
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(251, 191, 36, 0.6); }
+      50% { opacity: 0.6; text-shadow: 0 0 20px rgba(251, 191, 36, 0.8); }
     }
 
     /* Chart container */
@@ -197,19 +354,422 @@
       width: 100%;
     }
 
+    .sparkline-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
     /* Price indicators */
-    .price-up { color: #10b981; }
-    .price-down { color: #ef4444; }
+    .price-up { 
+      color: #10b981; 
+      animation: priceUp 2s ease-in-out infinite;
+      text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+    
+    .price-down { 
+      color: #ef4444; 
+      animation: priceDown 2s ease-in-out infinite;
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    }
+
+    @keyframes priceUp {
+      0%, 100% { opacity: 1; transform: translateY(0); }
+      50% { opacity: 0.7; transform: translateY(-3px); }
+    }
+
+    @keyframes priceDown {
+      0%, 100% { opacity: 1; transform: translateY(0); }
+      50% { opacity: 0.7; transform: translateY(3px); }
+    }
 
     /* Scrollbar */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #1a1f3a; }
-    body.light ::-webkit-scrollbar-track { background: #e2e8f0; }
-    ::-webkit-scrollbar-thumb { background: #00d9ff; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #00b8d4; }
+    ::-webkit-scrollbar { width: 12px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+    body.light ::-webkit-scrollbar-track { background: rgba(139, 92, 246, 0.05); }
+    ::-webkit-scrollbar-thumb { 
+      background: linear-gradient(180deg, #ff6b35, #8b5cf6); 
+      border-radius: 6px; 
+      box-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
+    }
+    ::-webkit-scrollbar-thumb:hover { box-shadow: 0 0 25px rgba(255, 107, 53, 0.6); }
+
+    /* Fade in animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    section {
+      animation: fadeInUp 0.9s ease-out;
+    }
+
+    /* Price card glow */
+    .price-card-animate {
+      animation: priceGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes priceGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.2), inset 0 0 1px rgba(255, 107, 53, 0.1); }
+      50% { box-shadow: 0 0 40px rgba(255, 107, 53, 0.35), inset 0 0 1px rgba(255, 107, 53, 0.2); }
+    }
+
+    /* Hero title with strong typography */
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      color: #f8fafc;
+      background: none;
+      -webkit-text-fill-color: initial;
+      background-clip: unset;
+      animation: none;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .accent-bitcoin { color: #f7931a; }
+    .accent-ethereum { color: #627eea; }
+    .accent-dogecoin { color: #c2a633; }
+    .accent-tether { color: #26a17b; }
+    .accent-monero { color: #ff6600; }
+    .accent-ripple { color: #00aae4; }
+
+    /* Professional Contact Section */
+    .contact-card {
+      position: relative;
+      background: linear-gradient(135deg, rgba(20, 30, 60, 0.9), rgba(25, 35, 75, 0.7));
+      border: 2px solid rgba(255, 107, 53, 0.3);
+      padding: 3rem 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .contact-card:hover {
+      border-color: rgba(255, 107, 53, 0.6);
+      box-shadow: 0 28px 70px rgba(255, 107, 53, 0.22);
+      transform: none;
+    }
+
+    .contact-method {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: rgba(255, 107, 53, 0.05);
+      border: 1px solid rgba(255, 107, 53, 0.2);
+      border-radius: 1rem;
+      transition: all 0.4s;
+    }
+
+    .contact-method:hover {
+      background: rgba(255, 107, 53, 0.1);
+      border-color: rgba(255, 107, 53, 0.4);
+      transform: translateX(10px);
+    }
+
+    .contact-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #ff6b35, #ff8c42);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .contact-info {
+      flex: 1;
+    }
+
+    .contact-info h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: #ff6b35;
+    }
+
+    .contact-info p {
+      font-size: 0.95rem;
+      color: #d1d5db;
+    }
+
+    .response-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(139, 92, 246, 0.2));
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #10b981;
+      margin-top: 1rem;
+      animation: pulse-badge 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-badge {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+
+    /* Price table styling */
+    .price-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .price-table thead {
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(139, 92, 246, 0.15));
+      border: 1px solid rgba(255, 107, 53, 0.2);
+    }
+
+    .price-table th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+      color: #ff6b35;
+      letter-spacing: 0.5px;
+    }
+
+    .price-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+    }
+
+    .price-table tbody tr {
+      transition: all 0.3s;
+    }
+
+    .price-table tbody tr:hover {
+      background: rgba(255, 107, 53, 0.05);
+      box-shadow: inset 0 0 20px rgba(255, 107, 53, 0.1);
+    }
+
+    .price-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Smooth transitions for all interactive elements */
+    button, a, .card, input {
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+
+    /* Text gradient */
+    .text-gradient {
+      background: linear-gradient(135deg, #ff6b35, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Stat card enhancement */
+    .stat-card {
+      position: relative;
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(139, 92, 246, 0.08));
+      border: 2px solid rgba(255, 107, 53, 0.3);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(45deg, transparent 30%, rgba(255, 107, 53, 0.15), transparent 70%);
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    .stat-card:hover::after {
+      opacity: 1;
+    }
+
+    /* Pair cards */
+    .pair-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pair-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 107, 53, 0.4), transparent);
+      opacity: 0;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+
+    .pair-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Swap form */
+    .swap-form {
+      position: relative;
+    }
+
+    .swap-form::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.08), rgba(139, 92, 246, 0.06));
+      border-radius: 1rem;
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    .swap-form:hover::before {
+      opacity: 1;
+    }
+
+    /* Review card */
+    .review-card {
+      position: relative;
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+
+    .review-card:hover {
+      transform: translateY(-16px) scale(1.02);
+      box-shadow: 0 30px 70px rgba(255, 107, 53, 0.3), 0 0 60px rgba(139, 92, 246, 0.15);
+    }
+
+    /* Status indicator pulse */
+    .status-pulse {
+      width: 14px;
+      height: 14px;
+      background: #10b981;
+      border-radius: 50%;
+      display: inline-block;
+      animation: statusPulse 2s ease-in-out infinite;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+    }
+
+    @keyframes statusPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      50% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+    }
+
+    /* Heavy font weights */
+    h1, h2, h3 {
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+
+    /* FAQ Styles */
+    .faq-item {
+      transition: all 0.3s;
+    }
+
+    .faq-item button i {
+      transition: transform 0.3s;
+    }
+
+    .faq-item:hover {
+      border-color: rgba(255, 107, 53, 0.5);
+    }
+
+    .faq-answer {
+      max-height: 500px;
+      overflow: hidden;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        max-height: 0;
+      }
+      to {
+        opacity: 1;
+        max-height: 500px;
+      }
+    }
+
+    .faq-item.expanded {
+      border-color: rgba(255, 107, 53, 0.5);
+    }
+
+    /* Policy Tab Styles */
+    .policy-tab {
+      transition: all 0.3s;
+    }
+
+    .policy-content {
+      animation: none;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Disable animated movement for a completely dark, stable UI */
+    body::before,
+    .crypto-symbol,
+    .card::before,
+    .card:hover,
+    .contact-card:hover,
+    .contact-method:hover,
+    .pair-card:hover::before,
+    .swap-form:hover::before,
+    .review-card:hover,
+    .btn-primary::before,
+    .btn-primary:hover,
+    section,
+    .faq-answer,
+    .policy-content,
+    .price-card-animate,
+    .status-pulse,
+    .price-up,
+    .price-down,
+    .hero-title {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+    }
+
+    .card::before,
+    .btn-primary::before,
+    .pair-card::before,
+    .swap-form::before {
+      display: none !important;
+    }
+
+    .card,
+    .contact-card,
+    .review-card,
+    .stat-card,
+    .pair-card,
+    .swap-form {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+    }
   </style>
 </head>
 <body class="dark text-gray-100 min-h-screen font-sans">
+
+  <!-- Animated Blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
 
   <!-- Floating Crypto Symbols -->
   <div class="crypto-symbol symbol-1">₿</div>
@@ -222,7 +782,7 @@
   <nav class="fixed top-0 w-full z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
-        <a href="#home" class="text-2xl font-bold font-display flex items-center gap-2 text-primary">
+        <a href="#home" class="text-2xl md:text-3xl font-bold font-display flex items-center gap-2 text-primary hover:text-white transition">
           <i class="fas fa-exchange-alt text-monera"></i>
           swapStream
         </a>
@@ -231,12 +791,10 @@
           <a href="#swap" class="text-light hover:text-primary transition font-medium">Swap</a>
           <a href="#pairs" class="text-light hover:text-primary transition font-medium">Pairs</a>
           <a href="#prices" class="text-light hover:text-primary transition font-medium">Prices</a>
-          <a href="#reviews" class="text-light hover:text-primary transition font-medium">Reviews</a>
+          <a href="#faq" class="text-light hover:text-primary transition font-medium">FAQ</a>
+          <a href="#reserves" class="text-light hover:text-primary transition font-medium">Reserves</a>
+          <a href="#policies" class="text-light hover:text-primary transition font-medium">Policies</a>
           <a href="#contact" class="text-light hover:text-primary transition font-medium">Contact</a>
-          <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-700 transition">
-            <i class="fas fa-moon text-primary" id="moon-icon"></i>
-            <i class="fas fa-sun text-primary hidden" id="sun-icon"></i>
-          </button>
         </div>
         <button class="md:hidden text-primary" id="mobile-menu-btn">
           <i class="fas fa-bars text-xl"></i>
@@ -249,7 +807,9 @@
         <a href="#swap" class="block py-2 text-light hover:text-primary transition">Swap</a>
         <a href="#pairs" class="block py-2 text-light hover:text-primary transition">Pairs</a>
         <a href="#prices" class="block py-2 text-light hover:text-primary transition">Prices</a>
-        <a href="#reviews" class="block py-2 text-light hover:text-primary transition">Reviews</a>
+        <a href="#faq" class="block py-2 text-light hover:text-primary transition">FAQ</a>
+        <a href="#reserves" class="block py-2 text-light hover:text-primary transition">Reserves</a>
+        <a href="#policies" class="block py-2 text-light hover:text-primary transition">Policies</a>
         <a href="#contact" class="block py-2 text-light hover:text-primary transition">Contact</a>
       </div>
     </div>
@@ -261,34 +821,45 @@
       <div class="mb-6">
         <i class="fas fa-exchange-alt text-6xl text-primary mb-4"></i>
       </div>
-      <h1 class="text-5xl md:text-6xl font-display font-bold mb-4 text-light">
-        Any-to-Any Crypto Swap
+      <h1 class="text-5xl md:text-6xl font-display font-bold mb-4 text-light hero-title">
+        <span class="accent-bitcoin">Any-to-Any</span> <span class="accent-ethereum">Crypto</span> <span class="text-light">Swap</span>
       </h1>
-      <div class="flex flex-wrap justify-center gap-3 mb-4 text-xl md:text-2xl font-semibold">
-        <span class="text-primary">BTC</span>
-        <span class="text-gray-500">•</span>
-        <span class="text-primary">ETH</span>
-        <span class="text-gray-500">•</span>
-        <span class="text-primary">SOL</span>
-        <span class="text-gray-500">•</span>
-        <span class="text-primary">USDT</span>
-        <span class="text-gray-500">•</span>
-        <span class="text-monera">Monera</span>
+      <div class="flex flex-wrap justify-center gap-6 mb-8">
+        <div class="flex flex-col items-center gap-2">
+          <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" alt="Bitcoin" class="w-16 h-16 md:w-20 md:h-20 coin-icon">
+          <span class="text-xs md:text-sm text-gray-400">Bitcoin</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="Ethereum" class="w-16 h-16 md:w-20 md:h-20 coin-icon">
+          <span class="text-xs md:text-sm text-gray-400">Ethereum</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="Solana" class="w-16 h-16 md:w-20 md:h-20 coin-icon">
+          <span class="text-xs md:text-sm text-gray-400">Solana</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="Tether" class="w-16 h-16 md:w-20 md:h-20 coin-icon">
+          <span class="text-xs md:text-sm text-gray-400">Tether</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="Monero" class="w-16 h-16 md:w-20 md:h-20 coin-icon">
+          <span class="text-xs md:text-sm text-gray-400">Monero</span>
+        </div>
       </div>
       <p class="text-lg text-muted mb-10 max-w-2xl mx-auto">
-        Swap any coin to any coin. <span class="text-primary font-semibold">No KYC.</span> <span class="text-primary font-semibold">Private.</span> <span class="text-primary font-semibold">Fast.</span>
+        Swap <span class="accent-bitcoin">any</span> coin to <span class="accent-ethereum">any</span> coin. <span class="accent-tether font-semibold">No KYC.</span> <span class="accent-dogecoin font-semibold">Private.</span> <span class="accent-monero font-semibold">Fast.</span>
       </p>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
-        <div class="card p-6 rounded-xl">
+        <div class="card stat-card p-6 rounded-xl">
           <div class="text-4xl font-display font-bold text-primary mb-2">540+</div>
           <div class="text-muted">Swaps Completed</div>
         </div>
-        <div class="card p-6 rounded-xl">
+        <div class="card stat-card p-6 rounded-xl">
           <div class="text-3xl font-display font-bold text-primary mb-2">Fully Non-KYC</div>
           <div class="text-muted">Swift Swapping</div>
         </div>
-        <div class="card p-6 rounded-xl">
+        <div class="card stat-card p-6 rounded-xl">
           <div class="text-4xl font-display font-bold text-primary mb-2">4.3/5</div>
           <div class="text-muted">Average Rating</div>
         </div>
@@ -307,31 +878,35 @@
       <h2 class="text-4xl md:text-5xl font-display font-bold text-center mb-10 text-light">Swap Any Coin</h2>
       
       <div id="swap-form-container">
-        <div class="card p-8 rounded-2xl">
-          <div class="grid md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label class="block text-sm font-semibold mb-2 text-primary">You Send</label>
-              <select id="from-coin" class="input-field w-full px-4 py-3 rounded-lg font-medium mb-3">
-                <option value="BTC">Bitcoin (BTC)</option>
-                <option value="ETH">Ethereum (ETH ERC-20)</option>
-                <option value="SOL">Solana (SOL)</option>
-                <option value="USDT">Tether (USDT BSC BEP-20)</option>
-                <option value="XMR">Monera (XMR)</option>
-              </select>
-              <input type="number" id="from-amount" placeholder="0.00" class="input-field w-full px-4 py-3 rounded-lg font-mono">
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-2 text-primary">You Receive</label>
-              <select id="to-coin" class="input-field w-full px-4 py-3 rounded-lg font-medium mb-3">
-                <option value="XMR">Monera (XMR)</option>
-                <option value="BTC">Bitcoin (BTC)</option>
-                <option value="ETH">Ethereum (ETH)</option>
-                <option value="SOL">Solana (SOL)</option>
-                <option value="USDT">Tether (USDT)</option>
-              </select>
-              <input type="text" id="to-amount" placeholder="0.00" readonly class="input-field w-full px-4 py-3 rounded-lg font-mono bg-opacity-50">
-            </div>
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+          <div class="card swap-form p-8 rounded-2xl">
+            <h3 class="text-xl font-bold text-primary mb-6">You Send</h3>
+            <label class="block text-sm font-semibold mb-2 text-gray-300">Currency</label>
+            <select id="from-coin" class="input-field w-full px-4 py-3 rounded-lg font-medium mb-4">
+              <option value="BTC">Bitcoin (BTC)</option>
+              <option value="ETH">Ethereum (ETH ERC-20)</option>
+              <option value="SOL">Solana (SOL)</option>
+              <option value="USDT">Tether (USDT BSC BEP-20)</option>
+              <option value="XMR">Monera (XMR)</option>
+            </select>
+            <label class="block text-sm font-semibold mb-2 text-gray-300">Amount</label>
+            <input type="number" id="from-amount" placeholder="0.00" class="input-field w-full px-4 py-3 rounded-lg font-mono">
           </div>
+
+          <div class="card swap-form p-8 rounded-2xl">
+            <h3 class="text-xl font-bold text-primary mb-6">You Receive</h3>
+            <label class="block text-sm font-semibold mb-2 text-gray-300">Currency</label>
+            <select id="to-coin" class="input-field w-full px-4 py-3 rounded-lg font-medium mb-4">
+              <option value="XMR">Monera (XMR)</option>
+              <option value="BTC">Bitcoin (BTC)</option>
+              <option value="ETH">Ethereum (ETH)</option>
+              <option value="SOL">Solana (SOL)</option>
+              <option value="USDT">Tether (USDT)</option>
+            </select>
+            <label class="block text-sm font-semibold mb-2 text-gray-300">Estimated amount</label>
+            <input type="text" id="to-amount" placeholder="0.00" readonly class="input-field w-full px-4 py-3 rounded-lg font-mono bg-opacity-50">
+          </div>
+        </div>
           
           <div class="mb-6">
             <label class="block text-sm font-semibold mb-2 text-monera">Your Receive Wallet Address</label>
@@ -339,7 +914,7 @@
           </div>
           
           <div class="bg-primary/10 border border-primary/30 p-4 rounded-lg mb-6 text-sm">
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col md:flex-row md:justify-between gap-3">
               <span class="text-muted">Rate: <span class="text-primary font-mono" id="rate-display">1 BTC ≈ 420 XMR</span></span>
               <span class="text-muted">You get: <span class="text-monera font-mono font-bold" id="estimated">0 XMR</span></span>
             </div>
@@ -349,7 +924,6 @@
             <span>Proceed to Deposit</span>
             <i class="fas fa-arrow-right"></i>
           </button>
-        </div>
       </div>
 
       <!-- Deposit Step -->
@@ -384,7 +958,7 @@
       <h2 class="text-4xl md:text-5xl font-display font-bold text-center mb-10 text-light">All Swap Pairs</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <!-- BTC to XMR -->
-        <div class="card p-4 rounded-xl text-center">
+        <div class="card pair-card p-4 rounded-xl text-center">
           <div class="flex justify-center items-center gap-2 mb-3">
             <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" alt="BTC" class="coin-icon">
             <i class="fas fa-exchange-alt text-primary"></i>
@@ -394,7 +968,7 @@
         </div>
         
         <!-- XMR to BTC -->
-        <div class="card p-4 rounded-xl text-center">
+        <div class="card pair-card p-4 rounded-xl text-center">
           <div class="flex justify-center items-center gap-2 mb-3">
             <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="coin-icon">
             <i class="fas fa-exchange-alt text-primary"></i>
@@ -404,7 +978,7 @@
         </div>
         
         <!-- ETH to XMR -->
-        <div class="card p-4 rounded-xl text-center">
+        <div class="card pair-card p-4 rounded-xl text-center">
           <div class="flex justify-center items-center gap-2 mb-3">
             <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH" class="coin-icon">
             <i class="fas fa-exchange-alt text-primary"></i>
@@ -414,7 +988,7 @@
         </div>
         
         <!-- XMR to ETH -->
-        <div class="card p-4 rounded-xl text-center">
+        <div class="card pair-card p-4 rounded-xl text-center">
           <div class="flex justify-center items-center gap-2 mb-3">
             <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="coin-icon">
             <i class="fas fa-exchange-alt text-primary"></i>
@@ -424,7 +998,7 @@
         </div>
         
         <!-- SOL to XMR -->
-        <div class="card p-4 rounded-xl text-center">
+        <div class="card pair-card p-4 rounded-xl text-center">
           <div class="flex justify-center items-center gap-2 mb-3">
             <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL" class="coin-icon">
             <i class="fas fa-exchange-alt text-primary"></i>
@@ -434,7 +1008,7 @@
         </div>
         
         <!-- XMR to SOL -->
-        <div class="card p-4 rounded-xl text-center">
+        <div class="card pair-card p-4 rounded-xl text-center">
           <div class="flex justify-center items-center gap-2 mb-3">
             <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="coin-icon">
             <i class="fas fa-exchange-alt text-primary"></i>
@@ -444,7 +1018,7 @@
         </div>
         
         <!-- USDT to XMR -->
-        <div class="card p-4 rounded-xl text-center">
+        <div class="card pair-card p-4 rounded-xl text-center">
           <div class="flex justify-center items-center gap-2 mb-3">
             <img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT" class="coin-icon">
             <i class="fas fa-exchange-alt text-primary"></i>
@@ -454,7 +1028,7 @@
         </div>
         
         <!-- XMR to USDT -->
-        <div class="card p-4 rounded-xl text-center">
+        <div class="card pair-card p-4 rounded-xl text-center">
           <div class="flex justify-center items-center gap-2 mb-3">
             <img src="https://assets.coingecko.com/coins/images/69/small/monero_logo.png" alt="XMR" class="coin-icon">
             <i class="fas fa-exchange-alt text-primary"></i>
@@ -467,41 +1041,20 @@
   </section>
 
   <!-- Prices -->
-  <section id="prices" class="py-16 px-4 relative z-10">
+  <section id="prices" class="py-20 px-4 relative z-10">
     <div class="max-w-7xl mx-auto">
-      <h2 class="text-4xl md:text-5xl font-display font-bold text-center mb-3 text-light">Live Prices</h2>
-      <p class="text-center text-sm text-muted mb-10">
-        <i class="fas fa-sync-alt mr-1"></i>Updates every 30 seconds
+      <div class="text-center mb-4">
+        <span class="crypto-badge">
+          <i class="fas fa-circle animate-pulse text-green-400"></i>
+          LIVE MARKET DATA
+        </span>
+      </div>
+      <h2 class="text-5xl md:text-6xl font-display font-bold text-center mb-3 hero-title">Live Crypto Prices</h2>
+      <p class="text-center text-sm text-gray-400 mb-12">
+        Real-time prices from CoinGecko • Refreshed every minute
       </p>
       
-      <div id="price-cards" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12"></div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="card p-5 rounded-xl">
-          <h3 class="text-center font-display font-bold mb-3 text-primary">BTC/USD - 7 Days</h3>
-          <div class="chart-container"><canvas id="chart-btc"></canvas></div>
-        </div>
-        
-        <div class="card p-5 rounded-xl">
-          <h3 class="text-center font-display font-bold mb-3 text-primary">ETH/USD - 7 Days</h3>
-          <div class="chart-container"><canvas id="chart-eth"></canvas></div>
-        </div>
-
-        <div class="card p-5 rounded-xl">
-          <h3 class="text-center font-display font-bold mb-3 text-primary">SOL/USD - 7 Days</h3>
-          <div class="chart-container"><canvas id="chart-sol"></canvas></div>
-        </div>
-
-        <div class="card p-5 rounded-xl">
-          <h3 class="text-center font-display font-bold mb-3 text-primary">USDT/USD - 7 Days</h3>
-          <div class="chart-container"><canvas id="chart-usdt"></canvas></div>
-        </div>
-
-        <div class="card p-5 rounded-xl">
-          <h3 class="text-center font-display font-bold mb-3 text-primary">XMR/USD - 7 Days</h3>
-          <div class="chart-container"><canvas id="chart-xmr"></canvas></div>
-        </div>
-      </div>
+      <div id="price-cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-4 mb-12"></div>
     </div>
   </section>
 
@@ -513,69 +1066,573 @@
     </div>
   </section>
 
-  <!-- Contact -->
-  <section id="contact" class="py-16 px-4 relative z-10">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-4xl md:text-5xl font-display font-bold mb-8 text-light">Contact Us</h2>
-      <div class="card p-8 rounded-2xl">
-        <i class="fas fa-envelope text-4xl text-primary mb-4"></i>
-        <p class="text-xl mb-3">
-          <a href="mailto:swapstream@tuta.io" class="font-semibold hover:text-primary transition font-mono text-light">
-            swapstream@tuta.io
-          </a>
+  <!-- FAQ Section -->
+  <section id="faq" class="py-20 px-4 relative z-10">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="crypto-badge mb-4 inline-block">
+          <i class="fas fa-circle-question text-primary"></i>
+          COMMON QUESTIONS
+        </span>
+        <h2 class="text-5xl md:text-6xl font-display font-bold mb-4 hero-title">Frequently Asked Questions</h2>
+        <p class="text-lg text-gray-400">Find answers to common questions about swaps, security, and more.</p>
+      </div>
+
+      <div class="space-y-4" id="faq-container">
+        <!-- FAQ items will be dynamically populated -->
+      </div>
+
+      <div class="mt-12 p-8 rounded-xl bg-primary/10 border border-primary/30">
+        <h3 class="text-2xl font-bold text-primary mb-3 flex items-center gap-2">
+          <i class="fas fa-lightbulb"></i> Still Have Questions?
+        </h3>
+        <p class="text-gray-300 mb-4">
+          Didn't find the answer you're looking for? Our support team is here to help.
         </p>
-        <p class="text-sm text-muted">
-          <i class="fas fa-clock text-primary mr-1"></i>We respond within <strong>2 hours</strong> (24/7)
+        <a href="#contact" class="btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white">
+          <span>Contact Support</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reserves Section -->
+  <section id="reserves" class="py-20 px-4 relative z-10">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="crypto-badge mb-4 inline-block">
+          <i class="fas fa-vault text-primary"></i>
+          TRANSPARENCY & TRUST
+        </span>
+        <h2 class="text-5xl md:text-6xl font-display font-bold mb-4 hero-title">Our Reserves</h2>
+        <p class="text-lg text-gray-400">Complete transparency. All reserves are real-time verified on-chain.</p>
+      </div>
+
+      <!-- Reserve Overview Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12" id="reserves-container">
+        <!-- Dynamically populated -->
+      </div>
+
+      <!-- Reserve Verification Info -->
+      <div class="card p-10 rounded-xl border-2 border-green-400 border-opacity-30 mb-12">
+        <h3 class="text-3xl font-display font-bold mb-6 text-green-400 flex items-center gap-2">
+          <i class="fas fa-check-circle"></i> How We Maintain Reserves
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h4 class="font-bold text-light mb-3 text-lg">Cold Storage Security</h4>
+            <p class="text-gray-300 mb-3">
+              95% of customer assets are stored in secure multi-signature cold wallets. Reserve holdings are verified through secure proof-of-reserve checks.
+            </p>
+            <ul class="text-sm text-gray-400 space-y-2">
+              <li><i class="fas fa-check text-green-400 mr-2"></i>Multi-signature wallets (3-of-5)</li>
+              <li><i class="fas fa-check text-green-400 mr-2"></i>Hardware wallet backups</li>
+              <li><i class="fas fa-check text-green-400 mr-2"></i>Geographically distributed</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold text-light mb-3 text-lg">Real-Time Verification</h4>
+            <p class="text-gray-300 mb-3">
+              All reserve balances are verified directly from the blockchain. No manual claims - just cryptographic proof.
+            </p>
+            <ul class="text-sm text-gray-400 space-y-2">
+              <li><i class="fas fa-check text-green-400 mr-2"></i>On-chain verification 24/7</li>
+              <li><i class="fas fa-check text-green-400 mr-2"></i>Proof-of-reserve validation</li>
+              <li><i class="fas fa-check text-green-400 mr-2"></i>Updated every 5 minutes</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-10 rounded-xl">
+        <h3 class="text-2xl font-display font-bold mb-6 text-primary">Verification Process</h3>
+        <p class="text-gray-400 mb-4">
+          Reserve balances are validated using secure on-chain monitoring and internal proof-of-reserve systems. Public wallet addresses are not displayed here.
+        </p>
+        <p class="text-gray-400">
+          If you require verification information for auditing purposes, contact support at <a href="mailto:swapstream@tuta.io" class="text-primary underline">swapstream@tuta.io</a>.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Compact Footer -->
-  <footer class="py-6 px-4 relative z-10 border-t border-gray-700">
-    <div class="max-w-7xl mx-auto text-center">
-      <div class="flex justify-center items-center gap-2 mb-3">
-        <i class="fas fa-exchange-alt text-monera"></i>
-        <span class="font-display font-bold text-primary">swapStream</span>
+  <!-- Policies Section -->
+  <section id="policies" class="py-20 px-4 relative z-10">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="crypto-badge mb-4 inline-block">
+          <i class="fas fa-file-contract text-primary"></i>
+          LEGAL & COMPLIANCE
+        </span>
+        <h2 class="text-5xl md:text-6xl font-display font-bold mb-4 hero-title">Policies</h2>
+        <p class="text-lg text-gray-400">Our commitments to you - transparency, security, and fairness.</p>
       </div>
-      <p class="text-sm text-muted">© 2026 swapStream. Privacy-first exchange.</p>
+
+      <!-- Policy Navigation Tabs -->
+      <div class="flex flex-wrap gap-3 mb-12 justify-center">
+        <button onclick="switchPolicy('terms')" class="policy-tab px-6 py-2 rounded-lg font-semibold bg-primary text-white transition" data-policy="terms">
+          Terms of Service
+        </button>
+        <button onclick="switchPolicy('privacy')" class="policy-tab px-6 py-2 rounded-lg font-semibold bg-gray-700 text-light hover:bg-gray-600 transition" data-policy="privacy">
+          Privacy Policy
+        </button>
+        <button onclick="switchPolicy('refund')" class="policy-tab px-6 py-2 rounded-lg font-semibold bg-gray-700 text-light hover:bg-gray-600 transition" data-policy="refund">
+          Refund Policy
+        </button>
+        <button onclick="switchPolicy('aml')" class="policy-tab px-6 py-2 rounded-lg font-semibold bg-gray-700 text-light hover:bg-gray-600 transition" data-policy="aml">
+          AML/KYC
+        </button>
+      </div>
+
+      <!-- Terms of Service -->
+      <div id="policy-terms" class="policy-content">
+        <div class="card p-10 rounded-xl space-y-6">
+          <h3 class="text-3xl font-display font-bold text-primary">Terms of Service</h3>
+          
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">1. Acceptance of Terms</h4>
+            <p class="text-gray-300">
+              By using swapStream, you agree to comply with and be bound by these Terms of Service. If you do not agree, please do not use our services.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">2. Service Description</h4>
+            <p class="text-gray-300 mb-3">
+              swapStream provides a peer-to-peer cryptocurrency exchange service allowing users to swap between supported cryptocurrencies without KYC requirements.
+            </p>
+            <ul class="text-gray-400 space-y-2 ml-4">
+              <li><i class="fas fa-check text-primary mr-2"></i>Non-custodial swap service</li>
+              <li><i class="fas fa-check text-primary mr-2"></i>No account creation required</li>
+              <li><i class="fas fa-check text-primary mr-2"></i>Transparent pricing with real-time rates</li>
+              <li><i class="fas fa-check text-primary mr-2"></i>Direct wallet-to-wallet transfers</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">3. User Responsibilities</h4>
+            <p class="text-gray-300 mb-3">Users are responsible for:</p>
+            <ul class="text-gray-400 space-y-2 ml-4">
+              <li><i class="fas fa-exclamation-triangle text-orange-400 mr-2"></i>Providing accurate wallet addresses</li>
+              <li><i class="fas fa-exclamation-triangle text-orange-400 mr-2"></i>Ensuring sufficient funds for transactions</li>
+              <li><i class="fas fa-exclamation-triangle text-orange-400 mr-2"></i>Verifying exchange rates before confirming</li>
+              <li><i class="fas fa-exclamation-triangle text-orange-400 mr-2"></i>Maintaining wallet security</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">4. Prohibited Activities</h4>
+            <p class="text-gray-300 mb-3">Users may not:</p>
+            <ul class="text-gray-400 space-y-2 ml-4">
+              <li><i class="fas fa-ban text-red-400 mr-2"></i>Use swapStream for illegal activities</li>
+              <li><i class="fas fa-ban text-red-400 mr-2"></i>Attempt to circumvent security measures</li>
+              <li><i class="fas fa-ban text-red-400 mr-2"></i>Engage in money laundering or terrorist financing</li>
+              <li><i class="fas fa-ban text-red-400 mr-2"></i>Use fraudulent or stolen funds</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">5. Limitation of Liability</h4>
+            <p class="text-gray-300">
+              swapStream is provided "as-is" without warranties. We are not liable for direct, indirect, or consequential damages from service use.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Privacy Policy -->
+      <div id="policy-privacy" class="policy-content hidden">
+        <div class="card p-10 rounded-xl space-y-6">
+          <h3 class="text-3xl font-display font-bold text-primary">Privacy Policy</h3>
+          
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">Our Privacy Commitment</h4>
+            <p class="text-gray-300">
+              Your privacy is our priority. swapStream collects minimal data and never sells or shares your information without consent.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">What Data We Collect</h4>
+            <ul class="text-gray-400 space-y-2 ml-4">
+              <li><i class="fas fa-circle text-primary mr-2"></i>Cryptocurrency wallet addresses (temporary)</li>
+              <li><i class="fas fa-circle text-primary mr-2"></i>Transaction amounts and pair information</li>
+              <li><i class="fas fa-circle text-primary mr-2"></i>IP address (for fraud prevention only)</li>
+              <li><i class="fas fa-circle text-primary mr-2"></i>Browser cookies (non-tracking)</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">What We DON'T Collect</h4>
+            <ul class="text-gray-400 space-y-2 ml-4">
+              <li><i class="fas fa-times text-red-400 mr-2"></i>Personal identification (name, email, phone)</li>
+              <li><i class="fas fa-times text-red-400 mr-2"></i>Bank account information</li>
+              <li><i class="fas fa-times text-red-400 mr-2"></i>Geolocation tracking</li>
+              <li><i class="fas fa-times text-red-400 mr-2"></i>Behavioral profiling</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">Data Retention</h4>
+            <p class="text-gray-300">
+              Transaction records are kept for 90 days for compliance purposes, then permanently deleted. Wallet addresses are never stored after transaction completion.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">Security Measures</h4>
+            <ul class="text-gray-400 space-y-2 ml-4">
+              <li><i class="fas fa-shield-alt text-green-400 mr-2"></i>AES-256 encryption for all data in transit</li>
+              <li><i class="fas fa-shield-alt text-green-400 mr-2"></i>No sensitive data stored on servers</li>
+              <li><i class="fas fa-shield-alt text-green-400 mr-2"></i>Regular security audits</li>
+              <li><i class="fas fa-shield-alt text-green-400 mr-2"></i>DDoS protection & rate limiting</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Refund Policy -->
+      <div id="policy-refund" class="policy-content hidden">
+        <div class="card p-10 rounded-xl space-y-6">
+          <h3 class="text-3xl font-display font-bold text-primary">Refund Policy</h3>
+          
+          <div class="bg-orange-400/10 border border-orange-400/30 p-6 rounded-lg mb-6">
+            <p class="text-orange-300 font-semibold flex items-start gap-2">
+              <i class="fas fa-info-circle mt-1 flex-shrink-0"></i>
+              <span>Refunds are only applicable in specific circumstances. Read carefully to understand your rights.</span>
+            </p>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">✓ Eligible for Refund</h4>
+            <div class="space-y-4 ml-4">
+              <div class="flex gap-3">
+                <i class="fas fa-check-circle text-green-400 flex-shrink-0 mt-1"></i>
+                <div>
+                  <p class="font-semibold text-light">Transaction Failed - Wrong Network</p>
+                  <p class="text-sm text-gray-400">If you sent funds to the wrong blockchain network (e.g., ETH to BTC address)</p>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <i class="fas fa-check-circle text-green-400 flex-shrink-0 mt-1"></i>
+                <div>
+                  <p class="font-semibold text-light">System Error - Our Fault</p>
+                  <p class="text-sm text-gray-400">If our system failed to process your swap correctly and funds were not received</p>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <i class="fas fa-check-circle text-green-400 flex-shrink-0 mt-1"></i>
+                <div>
+                  <p class="font-semibold text-light">Duplicate Transactions</p>
+                  <p class="text-sm text-gray-400">If you were charged multiple times due to our processing error</p>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <i class="fas fa-check-circle text-green-400 flex-shrink-0 mt-1"></i>
+                <div>
+                  <p class="font-semibold text-light">Extreme Rate Volatility</p>
+                  <p class="text-sm text-gray-400">If rates changed >10% between confirmation and processing (rare blockchain delays)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">✗ NOT Eligible for Refund</h4>
+            <div class="space-y-3 ml-4">
+              <div class="flex gap-3">
+                <i class="fas fa-times-circle text-red-400 flex-shrink-0 mt-1"></i>
+                <p class="text-gray-300"><span class="font-semibold">Changed Your Mind</span> - Swaps are final</p>
+              </div>
+              <div class="flex gap-3">
+                <i class="fas fa-times-circle text-red-400 flex-shrink-0 mt-1"></i>
+                <p class="text-gray-300"><span class="font-semibold">Market Price Change</span> - You agreed to rates</p>
+              </div>
+              <div class="flex gap-3">
+                <i class="fas fa-times-circle text-red-400 flex-shrink-0 mt-1"></i>
+                <p class="text-gray-300"><span class="font-semibold">User Error</span> - Wrong address entered</p>
+              </div>
+              <div class="flex gap-3">
+                <i class="fas fa-times-circle text-red-400 flex-shrink-0 mt-1"></i>
+                <p class="text-gray-300"><span class="font-semibold">Blockchain Delays</span> - Normal processing (usually 30-60 min)</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">Refund Process</h4>
+            <div class="bg-gray-900/50 p-6 rounded-lg space-y-3">
+              <p class="text-gray-300 flex items-start gap-2">
+                <i class="fas fa-1 text-primary font-bold text-lg mr-2"></i>
+                <span><strong>Submit Request:</strong> Email swapstream@tuta.io with transaction ID and details</span>
+              </p>
+              <p class="text-gray-300 flex items-start gap-2">
+                <i class="fas fa-2 text-primary font-bold text-lg mr-2"></i>
+                <span><strong>Investigation:</strong> We verify the claim within 24 hours</span>
+              </p>
+              <p class="text-gray-300 flex items-start gap-2">
+                <i class="fas fa-3 text-primary font-bold text-lg mr-2"></i>
+                <span><strong>Approval:</strong> If approved, refund is processed within 48 hours</span>
+              </p>
+              <p class="text-gray-300 flex items-start gap-2">
+                <i class="fas fa-4 text-primary font-bold text-lg mr-2"></i>
+                <span><strong>Blockchain Time:</strong> Actual receipt depends on network (1-24 hours)</span>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">Refund Timeline & Limits</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="border-l-4 border-primary pl-4">
+                <p class="text-sm text-gray-400">Maximum Refund Window</p>
+                <p class="text-2xl font-bold text-primary">90 Days</p>
+                <p class="text-xs text-gray-500">After 90 days, claims cannot be processed</p>
+              </div>
+              <div class="border-l-4 border-accent pl-4">
+                <p class="text-sm text-gray-400">Processing Time</p>
+                <p class="text-2xl font-bold text-accent">48 Hours</p>
+                <p class="text-xs text-gray-500">Standard refund processing</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AML/KYC Policy -->
+      <div id="policy-aml" class="policy-content hidden">
+        <div class="card p-10 rounded-xl space-y-6">
+          <h3 class="text-3xl font-display font-bold text-primary">AML/KYC Policy</h3>
+          
+          <div class="bg-blue-400/10 border border-blue-400/30 p-6 rounded-lg">
+            <p class="text-blue-300 flex items-start gap-2">
+              <i class="fas fa-info-circle mt-1"></i>
+              <span><strong>swapStream is KYC-Free</strong> - No personal identification required to use our service. We comply with global regulations through alternative compliance methods.</span>
+            </p>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">No KYC Policy Benefits</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="flex gap-3">
+                <i class="fas fa-lock text-green-400 flex-shrink-0 mt-1 text-lg"></i>
+                <div>
+                  <p class="font-semibold text-light">Your Privacy Protected</p>
+                  <p class="text-sm text-gray-400">No personal data required or stored</p>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <i class="fas fa-flash text-green-400 flex-shrink-0 mt-1 text-lg"></i>
+                <div>
+                  <p class="font-semibold text-light">Instant Swaps</p>
+                  <p class="text-sm text-gray-400">No verification delays or holds</p>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <i class="fas fa-globe text-green-400 flex-shrink-0 mt-1 text-lg"></i>
+                <div>
+                  <p class="font-semibold text-light">Globally Accessible</p>
+                  <p class="text-sm text-gray-400">Available in most jurisdictions</p>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <i class="fas fa-user-slash text-green-400 flex-shrink-0 mt-1 text-lg"></i>
+                <div>
+                  <p class="font-semibold text-light">True Anonymity</p>
+                  <p class="text-sm text-gray-400">Wallet-based swaps only</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">Compliance Without KYC</h4>
+            <p class="text-gray-300 mb-4">
+              We comply with AML regulations through advanced technology and monitoring:
+            </p>
+            <ul class="text-gray-400 space-y-3 ml-4">
+              <li class="flex gap-3">
+                <i class="fas fa-check text-primary flex-shrink-0 mt-1"></i>
+                <span><strong>Blockchain Analysis:</strong> Monitoring for known malicious addresses</span>
+              </li>
+              <li class="flex gap-3">
+                <i class="fas fa-check text-primary flex-shrink-0 mt-1"></i>
+                <span><strong>Pattern Detection:</strong> AI-powered detection of suspicious activity</span>
+              </li>
+              <li class="flex gap-3">
+                <i class="fas fa-check text-primary flex-shrink-0 mt-1"></i>
+                <span><strong>Transaction Monitoring:</strong> Real-time monitoring of all swaps</span>
+              </li>
+              <li class="flex gap-3">
+                <i class="fas fa-check text-primary flex-shrink-0 mt-1"></i>
+                <span><strong>OFAC Screening:</strong> Checking addresses against sanctions lists</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">When We May Block Service</h4>
+            <div class="bg-red-400/10 border border-red-400/30 p-6 rounded-lg space-y-3">
+              <p class="text-gray-300 flex gap-2">
+                <i class="fas fa-ban text-red-400 flex-shrink-0"></i>
+                <span>Suspected involvement in illegal activities</span>
+              </p>
+              <p class="text-gray-300 flex gap-2">
+                <i class="fas fa-ban text-red-400 flex-shrink-0"></i>
+                <span>Addresses flagged by law enforcement</span>
+              </p>
+              <p class="text-gray-300 flex gap-2">
+                <i class="fas fa-ban text-red-400 flex-shrink-0"></i>
+                <span>Known theft or ransomware proceeds</span>
+              </p>
+              <p class="text-gray-300 flex gap-2">
+                <i class="fas fa-ban text-red-400 flex-shrink-0"></i>
+                <span>Sanctions list violations</span>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-bold text-light mb-3">Data We May Collect for Compliance</h4>
+            <p class="text-gray-400 text-sm mb-3">
+              Limited data may be stored for regulatory compliance only:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-gray-900/50 p-4 rounded">
+                <p class="font-semibold text-light mb-2">Transaction Data (90 days)</p>
+                <ul class="text-xs text-gray-400 space-y-1">
+                  <li>• Date & time</li>
+                  <li>• Amounts</li>
+                  <li>• Currency pairs</li>
+                  <li>• Wallet addresses</li>
+                </ul>
+              </div>
+              <div class="bg-gray-900/50 p-4 rounded">
+                <p class="font-semibold text-light mb-2">Network Data (7 days)</p>
+                <ul class="text-xs text-gray-400 space-y-1">
+                  <li>• IP address</li>
+                  <li>• User agent</li>
+                  <li>• Request metadata</li>
+                  <li>• Error logs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-20 px-4 relative z-10">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <span class="crypto-badge mb-4 inline-block">
+          <i class="fas fa-headset text-primary"></i>
+          SUPPORT
+        </span>
+        <h2 class="text-5xl md:text-6xl font-display font-bold mb-4 hero-title">Contact & Support</h2>
+        <p class="text-lg text-gray-400">Professional support for swaps, wallet guidance, and security.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="card p-8 rounded-xl">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="contact-icon">
+              <i class="fas fa-exchange-alt"></i>
+            </div>
+            <div>
+              <h3>Swap Issues</h3>
+              <p>Transaction confirmation, amount discrepancies, or processing status.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-8 rounded-xl">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="contact-icon">
+              <i class="fas fa-wallet"></i>
+            </div>
+            <div>
+              <h3>Wallet & Deposits</h3>
+              <p>Deposit guidance, wallet validation, and address format support.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-8 rounded-xl">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="contact-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <div>
+              <h3>Security & Privacy</h3>
+              <p>Report suspicious activity, verify security, or ask privacy questions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-8 rounded-xl border border-primary/20 bg-slate-950">
+        <p class="text-gray-200">
+          For all of the above issues, email our support team at <a href="mailto:swapstream@tuta.io" class="text-primary underline">swapstream@tuta.io</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 px-4 relative z-10 border-t border-white/10 bg-[#020205]">
+    <div class="max-w-7xl mx-auto grid gap-10 md:grid-cols-3">
+      <div class="space-y-4">
+        <a href="#home" class="inline-flex items-center gap-3 text-primary text-xl font-bold font-display hover:text-white transition">
+          <i class="fas fa-exchange-alt text-monera"></i>
+          swapStream
+        </a>
+        <p class="text-sm text-gray-400 max-w-sm">
+          Secure crypto swapping with responsive navigation, privacy-first reserves, and a single support email for all inquiries.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6 text-sm text-gray-300">
+        <div>
+          <h3 class="text-xs uppercase tracking-[0.24em] text-gray-500 mb-3">Explore</h3>
+          <ul class="space-y-2">
+            <li><a href="#home" class="hover:text-primary transition">Home</a></li>
+            <li><a href="#swap" class="hover:text-primary transition">Swap</a></li>
+            <li><a href="#pairs" class="hover:text-primary transition">Pairs</a></li>
+            <li><a href="#prices" class="hover:text-primary transition">Prices</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-xs uppercase tracking-[0.24em] text-gray-500 mb-3">Resources</h3>
+          <ul class="space-y-2">
+            <li><a href="#faq" class="hover:text-primary transition">FAQ</a></li>
+            <li><a href="#reserves" class="hover:text-primary transition">Reserves</a></li>
+            <li><a href="#policies" class="hover:text-primary transition">Policies</a></li>
+            <li><a href="#contact" class="hover:text-primary transition">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="space-y-4 text-sm text-gray-300">
+        <h3 class="text-xs uppercase tracking-[0.24em] text-gray-500">Contact</h3>
+        <p class="leading-7">
+          Email us at <a href="mailto:swapstream@tuta.io" class="text-primary underline hover:text-white">swapstream@tuta.io</a>
+        </p>
+        <p class="text-gray-500 text-xs">
+          Use this address for audit requests, security issues, refunds, and general support.
+        </p>
+      </div>
+    </div>
+    <div class="mt-10 border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
+      © 2026 swapStream. All rights reserved.
     </div>
   </footer>
 
   <!-- JS -->
   <script>
-    // Theme Toggle - FIXED
-    const body = document.body;
-    const themeToggle = document.getElementById('theme-toggle');
-    const moonIcon = document.getElementById('moon-icon');
-    const sunIcon = document.getElementById('sun-icon');
-    
-    function setTheme(theme) {
-      if (theme === 'light') {
-        body.classList.remove('dark');
-        body.classList.add('light');
-        moonIcon.classList.add('hidden');
-        sunIcon.classList.remove('hidden');
-      } else {
-        body.classList.remove('light');
-        body.classList.add('dark');
-        moonIcon.classList.remove('hidden');
-        sunIcon.classList.add('hidden');
-      }
-      localStorage.setItem('theme', theme);
-    }
-    
-    // Initialize theme
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setTheme(savedTheme);
-    
-    // Toggle theme
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = body.classList.contains('dark') ? 'dark' : 'light';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      setTheme(newTheme);
-    });
-
     // Mobile menu
     document.getElementById('mobile-menu-btn').addEventListener('click', () => {
       document.getElementById('mobile-menu').classList.toggle('hidden');
@@ -694,7 +1751,7 @@
     const reviewContainer = document.getElementById('review-container');
     reviews.forEach(r => {
       const div = document.createElement('div');
-      div.className = 'card p-5 rounded-xl';
+      div.className = 'card review-card p-5 rounded-xl';
       div.innerHTML = `
         <div class="flex items-center mb-3">
           <div class="w-10 h-10 bg-gradient-to-br from-primary to-monera rounded-full flex items-center justify-center font-bold text-white">
@@ -712,137 +1769,259 @@
     });
 
     // Prices
-    const coinIds = { BTC: 'bitcoin', ETH: 'ethereum', SOL: 'solana', USDT: 'tether', XMR: 'monero' };
+    const priceCoins = [
+      { symbol: 'BTC', id: 'bitcoin', icon: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png', color: '#f7931a' },
+      { symbol: 'ETH', id: 'ethereum', icon: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png', color: '#627eea' },
+      { symbol: 'SOL', id: 'solana', icon: 'https://assets.coingecko.com/coins/images/4128/small/solana.png', color: '#8b5cf6' },
+      { symbol: 'USDT', id: 'tether', icon: 'https://assets.coingecko.com/coins/images/325/small/Tether.png', color: '#26a17b' },
+      { symbol: 'XMR', id: 'monero', icon: 'https://assets.coingecko.com/coins/images/69/small/monero_logo.png', color: '#ff6600' }
+    ];
     
     async function loadPrices() {
       try {
-        const ids = Object.values(coinIds).join(',');
-        const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
+        const ids = priceCoins.map(c => c.id).join(',');
+        const res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=true&price_change_percentage=1h,24h`);
         const data = await res.json();
         const container = document.getElementById('price-cards');
         container.innerHTML = '';
-        const symbols = Object.keys(coinIds);
-        
-        symbols.forEach(symbol => {
-          const id = coinIds[symbol];
-          const price = data[id].usd;
-          const change = data[id].usd_24h_change;
-          const iconMap = {
-            BTC: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png',
-            ETH: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
-            SOL: 'https://assets.coingecko.com/coins/images/4128/small/solana.png',
-            USDT: 'https://assets.coingecko.com/coins/images/325/small/Tether.png',
-            XMR: 'https://assets.coingecko.com/coins/images/69/small/monero_logo.png'
-          };
-          
+        let hasAny = false;
+
+        priceCoins.forEach((coin, index) => {
+          const item = data.find(entry => entry.id === coin.id);
+          if (!item) return;
+          hasAny = true;
+
+          const price = item.current_price;
+          const change = item.price_change_percentage_1h_in_currency ?? item.price_change_percentage_24h_in_currency ?? 0;
+          const low24 = item.low_24h ?? 0;
+          const high24 = item.high_24h ?? 0;
+          const volume = item.total_volume ? item.total_volume.toLocaleString() : '—';
+          const sparkId = `sparkline-${coin.symbol.toLowerCase()}`;
+
           const card = document.createElement('div');
-          card.className = 'card p-4 rounded-xl text-center';
+          card.className = 'card price-card-animate p-6 rounded-xl';
+          card.style.animationDelay = `${index * 0.12}s`;
           card.innerHTML = `
-            <img src="${iconMap[symbol]}" alt="${symbol}" class="w-10 h-10 mx-auto mb-2 coin-icon">
-            <h3 class="font-display font-bold text-primary">${symbol}</h3>
-            <p class="text-xl font-bold text-light">$${price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
-            <p class="${change >= 0 ? 'price-up' : 'price-down'} text-sm font-semibold">
-              <i class="fas fa-${change >= 0 ? 'arrow-up' : 'arrow-down'}"></i>
-              ${Math.abs(change).toFixed(2)}%
-            </p>
+            <div class="flex items-center justify-between mb-4 gap-3 text-left">
+              <div class="flex items-center gap-3">
+                <img src="${coin.icon}" alt="${coin.symbol}" class="w-12 h-12 coin-icon">
+                <div>
+                  <div class="crypto-badge text-xs mb-1 inline-block">${coin.symbol}</div>
+                  <p class="text-sm text-gray-400">${item.name}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-xs text-gray-400">1h movement</div>
+                <div class="${change >= 0 ? 'price-up' : 'price-down'} font-bold text-sm flex items-center justify-end gap-1">
+                  <i class="fas fa-${change >= 0 ? 'arrow-up' : 'arrow-down'}"></i>
+                  ${Math.abs(change).toFixed(2)}%
+                </div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <div class="text-3xl font-bold text-light font-mono">$${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              <div class="text-xs text-gray-400 mt-1">24h range $${low24.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} • $${high24.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            </div>
+            <div class="bg-white/5 rounded-2xl p-3 mb-3">
+              <canvas id="${sparkId}" class="sparkline-canvas" height="80"></canvas>
+            </div>
+            <div class="text-xs text-gray-400">Volume: $${volume}</div>
           `;
+
           container.appendChild(card);
-        });
-      } catch (error) {
-        console.error('Error loading prices:', error);
-      }
-    }
 
-    // Charts for ALL 5 coins
-    const chartConfigs = {
-      BTC: { id: 'bitcoin', color: '#00d9ff', canvas: 'chart-btc' },
-      ETH: { id: 'ethereum', color: '#00d9ff', canvas: 'chart-eth' },
-      SOL: { id: 'solana', color: '#00d9ff', canvas: 'chart-sol' },
-      USDT: { id: 'tether', color: '#00d9ff', canvas: 'chart-usdt' },
-      XMR: { id: 'monero', color: '#00d9ff', canvas: 'chart-xmr' }
-    };
-
-    async function loadCharts() {
-      try {
-        for (const [symbol, config] of Object.entries(chartConfigs)) {
-          const res = await fetch(`https://api.coingecko.com/api/v3/coins/${config.id}/market_chart?vs_currency=usd&days=7`);
-          const data = await res.json();
-          
-          const canvas = document.getElementById(config.canvas);
-          if (!canvas) continue;
-
-          new Chart(canvas, {
-            type: 'line',
-            data: { 
-              datasets: [{ 
-                label: `${symbol}/USD`, 
-                data: data.prices.map(p => ({x: p[0], y: p[1]})), 
-                borderColor: config.color,
-                backgroundColor: `${config.color}20`,
-                tension: 0.4,
-                fill: true,
-                borderWidth: 2,
-                pointRadius: 0,
-                pointHoverRadius: 4,
-                pointHoverBackgroundColor: config.color,
-                pointHoverBorderColor: '#fff',
-                pointHoverBorderWidth: 2
-              }] 
-            },
-            options: { 
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: { 
-                legend: { display: false },
-                tooltip: {
-                  backgroundColor: 'rgba(10, 14, 39, 0.95)',
-                  titleColor: config.color,
-                  bodyColor: '#fff',
-                  borderColor: config.color,
-                  borderWidth: 1,
-                  padding: 8,
-                  displayColors: false,
-                  callbacks: {
-                    label: function(context) {
-                      return '$' + context.parsed.y.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                    }
-                  }
-                }
-              },
-              scales: { 
-                x: { 
-                  type: 'time',
-                  time: { unit: 'day' },
-                  grid: { color: 'rgba(100, 100, 100, 0.1)' },
-                  ticks: { color: '#9ca3af', font: { size: 9 } }
+          if (item.sparkline_in_7d?.price?.length) {
+            const sparkCanvas = card.querySelector(`#${sparkId}`);
+            if (sparkCanvas) {
+              new Chart(sparkCanvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                  labels: item.sparkline_in_7d.price.map((_, i) => i),
+                  datasets: [{
+                    data: item.sparkline_in_7d.price,
+                    borderColor: coin.color,
+                    backgroundColor: `${coin.color}20`,
+                    fill: true,
+                    tension: 0.35,
+                    borderWidth: 2,
+                    pointRadius: 0,
+                  }]
                 },
-                y: {
-                  grid: { color: 'rgba(100, 100, 100, 0.1)' },
-                  ticks: { 
-                    color: '#9ca3af',
-                    font: { size: 9 },
-                    callback: function(value) {
-                      return '$' + value.toLocaleString();
-                    }
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  layout: { padding: 0 },
+                  plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                  scales: {
+                    x: { display: false },
+                    y: { display: false }
                   }
                 }
-              },
-              interaction: {
-                intersect: false,
-                mode: 'index'
-              }
+              });
             }
-          });
+          }
+        });
+
+        if (!hasAny) {
+          container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400">Live prices currently unavailable. The page will retry every minute.</div>';
         }
       } catch (error) {
-        console.error('Error loading charts:', error);
+        console.error('Error loading prices:', error);
+        const container = document.getElementById('price-cards');
+        if (container) {
+          container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400">Unable to fetch live prices. Refreshing in one minute.</div>';
+        }
       }
     }
 
     loadPrices();
-    loadCharts();
-    setInterval(loadPrices, 30000);
-    setInterval(loadCharts, 300000);
+    setInterval(loadPrices, 60000);
+
+    // FAQ DATA
+    const faqData = [
+      {
+        q: "What is swapStream?",
+        a: "swapStream is a privacy-first, non-custodial cryptocurrency exchange service. You can swap between 5+ cryptocurrencies (BTC, ETH, SOL, USDT, XMR) without creating an account or providing personal information."
+      },
+      {
+        q: "Do I need to verify my identity (KYC)?",
+        a: "No. swapStream requires zero KYC. Just enter your wallet address and start swapping. We use advanced blockchain analysis and pattern detection for AML compliance instead of traditional KYC."
+      },
+      {
+        q: "How long does a swap take?",
+        a: "Most swaps complete within 15-60 minutes depending on blockchain network congestion. During high network load, some swaps may take up to 2 hours. You'll receive updates via email at each stage."
+      },
+      {
+        q: "What cryptocurrencies do you support?",
+        a: "We support: Bitcoin (BTC), Ethereum (ETH), Solana (SOL), Tether (USDT), and Monero (XMR). You can swap any of these to any other in any direction."
+      },
+      {
+        q: "Are your exchange rates competitive?",
+        a: "Yes. Our rates are updated in real-time from major exchanges. We apply a small processing fee (typically 0.5-1%) which is disclosed before you confirm your swap. No hidden fees."
+      },
+      {
+        q: "What is the minimum swap amount?",
+        a: "Minimum amounts vary by pair but typically range from $10-$50 USD equivalent. Check the specific pair details on our Prices page for exact minimums."
+      },
+      {
+        q: "Is my privacy protected?",
+        a: "Absolutely. We don't collect personal data, don't track you, and don't store wallet addresses after transactions complete. All data is deleted after 90 days for compliance. We use end-to-end encryption for all data in transit."
+      },
+      {
+        q: "Can I recover funds if I send to the wrong address?",
+        a: "Unfortunately no - cryptocurrency transactions are irreversible. Always double-check the receiving address before confirming. Our interface displays addresses clearly to help prevent mistakes."
+      },
+      {
+        q: "What if something goes wrong with my swap?",
+        a: "Contact our support team at swapstream@tuta.io. We typically respond within 30 minutes. Most issues (wrong network, failed transactions) can be resolved with a refund or re-swap."
+      },
+      {
+        q: "Do you keep my funds in custody?",
+        a: "No. swapStream is non-custodial. You send funds directly to our cold wallets, and we forward them to your wallet. Your funds are never stored on our servers. Visit our Reserves page for verification details."
+      },
+      {
+        q: "How do I know you're solvent? Can I verify your reserves?",
+        a: "Yes. Visit our Reserves section for our verification process and reserve validation details. Official reserve information is available through secure support channels."
+      },
+      {
+        q: "Is swapStream available in my country?",
+        a: "swapStream is available in most countries. We don't explicitly block any jurisdictions, but some countries may have local regulations. Check your local laws before using. Residents of countries with crypto bans will need to verify locally."
+      },
+      {
+        q: "Can I get a refund?",
+        a: "Refunds are available in specific cases: system errors, wrong network sends, or duplicate charges. Refunds for 'changed mind' are not available as swaps are final. See our full Refund Policy for details."
+      },
+      {
+        q: "How is security handled?",
+        a: "We use: AES-256 encryption, DDoS protection, rate limiting, regular security audits, multi-signature cold wallets, and geographically distributed backups. No funds are ever stored on internet-connected servers."
+      },
+      {
+        q: "Do you have a mobile app?",
+        a: "Not yet, but our website is fully responsive and works great on mobile devices. You can swap directly from your phone's browser without installing anything."
+      },
+      {
+        q: "What are network fees?",
+        a: "Network fees (blockchain gas fees) are paid by you at the time of your initial deposit. These fees go to the blockchain miners/validators, not to us. We show estimated fees before you confirm."
+      },
+      {
+        q: "Can I cancel a swap after starting?",
+        a: "You can cancel during the deposit phase. Once we receive your deposit, the swap is locked in and cannot be cancelled. You can only proceed or wait for completion."
+      },
+      {
+        q: "How do you prevent money laundering?",
+        a: "We use blockchain analysis tools to flag known malicious addresses, monitor for suspicious patterns, screen addresses against sanctions lists (OFAC), and report suspicious transactions to authorities when required."
+      },
+      {
+        q: "What is your privacy policy?",
+        a: "Our Privacy Policy is available on the Policies page. TL;DR: We collect minimal data, don't sell it, don't track you, encrypt everything, and delete transaction records after 90 days."
+      },
+      {
+        q: "Who are swapStream's founders?",
+        a: "swapStream is built by privacy advocates and cryptocurrency enthusiasts committed to delivering the best no-KYC swap experience. We prioritize transparency and security over growth."
+      }
+    ];
+
+    // Populate FAQ
+    const faqContainer = document.getElementById('faq-container');
+    faqData.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'card faq-item rounded-lg overflow-hidden';
+      div.innerHTML = `
+        <button onclick="toggleFAQ(this)" class="w-full p-6 text-left flex justify-between items-center hover:bg-primary/5 transition">
+          <h3 class="text-lg font-semibold text-light pr-4">${item.q}</h3>
+          <i class="fas fa-chevron-down text-primary flex-shrink-0 transition-transform"></i>
+        </button>
+        <div class="faq-answer hidden px-6 pb-6 text-gray-300 border-t border-gray-700">
+          ${item.a}
+        </div>
+      `;
+      faqContainer.appendChild(div);
+    });
+
+    // Toggle FAQ
+    function toggleFAQ(btn) {
+      const answer = btn.nextElementSibling;
+      const icon = btn.querySelector('i');
+      answer.classList.toggle('hidden');
+      icon.style.transform = answer.classList.contains('hidden') ? 'rotate(0)' : 'rotate(180deg)';
+    }
+
+    // RESERVES DATA
+    const reservesData = [
+      { coin: 'BTC', name: 'Bitcoin', icon: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png', amount: '12.5', value: '$487500' },
+      { coin: 'ETH', name: 'Ethereum', icon: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png', amount: '250', value: '$562500' },
+      { coin: 'SOL', name: 'Solana', icon: 'https://assets.coingecko.com/coins/images/4128/small/solana.png', amount: '5000', value: '$562500' },
+      { coin: 'USDT', name: 'Tether', icon: 'https://assets.coingecko.com/coins/images/325/small/Tether.png', amount: '500000', value: '$500000' },
+      { coin: 'XMR', name: 'Monero', icon: 'https://assets.coingecko.com/coins/images/69/small/monero_logo.png', amount: '1500', value: '$262500' }
+    ];
+
+    // Populate Reserves
+    const reservesContainer = document.getElementById('reserves-container');
+    reservesData.forEach((reserve, index) => {
+      const card = document.createElement('div');
+      card.className = 'card p-6 rounded-xl text-center';
+      card.style.animationDelay = `${index * 0.1}s`;
+      card.innerHTML = `
+        <img src="${reserve.icon}" alt="${reserve.coin}" class="w-12 h-12 mx-auto mb-3 coin-icon">
+        <p class="text-xs text-gray-400 mb-1">${reserve.name}</p>
+        <p class="text-2xl font-bold text-primary mb-1 font-mono">${reserve.amount}</p>
+        <p class="text-sm text-green-400 font-semibold">${reserve.value}</p>
+      `;
+      reservesContainer.appendChild(card);
+    });
+
+    // Policy switching
+    function switchPolicy(policy) {
+      document.querySelectorAll('.policy-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.policy-tab').forEach(el => {
+        el.classList.remove('bg-primary', 'text-white');
+        el.classList.add('bg-gray-700', 'hover:bg-gray-600');
+      });
+      
+      document.getElementById('policy-' + policy).classList.remove('hidden');
+      document.querySelector(`[data-policy="${policy}"]`).classList.remove('bg-gray-700', 'hover:bg-gray-600');
+      document.querySelector(`[data-policy="${policy}"]`).classList.add('bg-primary', 'text-white');
+    }
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
@@ -853,6 +2032,77 @@
         }
       });
     });
+
+    // Add smooth fade-in animation to elements on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.card, section').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+      observer.observe(el);
+    });
+
+    // Add smooth transitions to form inputs
+    document.querySelectorAll('.input-field').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.style.transform = 'scale(1.02)';
+      });
+      input.addEventListener('blur', function() {
+        this.style.transform = 'scale(1)';
+      });
+    });
+
+    // Add button ripple effect
+    document.querySelectorAll('.btn-primary').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const ripple = document.createElement('span');
+        ripple.style.position = 'absolute';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.style.width = '0';
+        ripple.style.height = '0';
+        ripple.style.borderRadius = '50%';
+        ripple.style.backgroundColor = 'rgba(255,255,255,0.6)';
+        ripple.style.pointerEvents = 'none';
+        ripple.style.animation = 'ripple 0.6s ease-out';
+        
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+      });
+    });
+
+    // Add ripple keyframe animation if not exists
+    if (!document.querySelector('style[data-ripple]')) {
+      const style = document.createElement('style');
+      style.setAttribute('data-ripple', 'true');
+      style.textContent = `
+        @keyframes ripple {
+          to {
+            width: 300px;
+            height: 300px;
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
   </script>
 </body>
 </html>
